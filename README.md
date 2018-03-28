@@ -8,4 +8,4 @@ This tcl package is included in the 14th version of the [GiD pre and post proces
 It uses the following packages:
 * gid_wizard: Available in the scripts folder of GiD
 * wcb: The Widget CallBack. A package that checks the input of an entry field, by Csaba Nemethi, available [here](http://www.nemethi.de/wcb/wcbRef.html)
-* tdom: A package to handle xml documents
+* tdom: A package to handle xml documents. Available [here](http://tdom.github.io)
