@@ -54,3 +54,16 @@ A wizard layout is defined in a xml file. This is the basic structure:
       * values: Defines the available values in the dropdown. Values can be defined as a static list, separated by commas, or as a dynamic list, using a tcl function that must return a commas separated string (see example NumberOfLoads).
       * onchange: (optional) TCL function called when the combo value is changed by the user. Usefull to create dependencies manually.
     * image: v must the the imagename (picture.png) NOT THE PATH
+
+#### XML conventions
+
+* Steps will be shown in the same order they appear in the XML.
+* Frames will be shoen in the same order they appear in the step.
+* I recommend to use titleless frames to place images.
+* Use \n in labels to create line breaks.
+* Use png or jpg images. Animated gifs will not move, don't try it... :cry:
+
+### TCL implementation
+
+:bulb: Disclaimer: If you are here, I assume that you know how to create a problemtype in GiD, and know the basics of TCL.
+
