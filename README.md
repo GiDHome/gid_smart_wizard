@@ -6,9 +6,9 @@ The main idea of this package is to allow GiD problemtype developers to create a
 ## About this package
 This tcl package is included in the 14th version of the [GiD pre and post processor](http://www.gidhome.com). 
 It uses the following packages:
-* gid_wizard: Available in the scripts folder of GiD
-* wcb: The Widget CallBack. A package that checks the input of an entry field, by Csaba Nemethi, available [here](http://www.nemethi.de/wcb/wcbRef.html)
-* tdom: A package to handle xml documents. Available [here](http://tdom.github.io)
+* gid_wizard: Available in the scripts folder of GiD.
+* wcb: The Widget CallBack. A package that checks the input of an entry field, by Csaba Nemethi, available [here](http://www.nemethi.de/wcb/wcbRef.html).
+* tdom: A package to handle xml documents. Available [here](http://tdom.github.io).
 
 All the packages defined here are distributed inside GiD, and the library import them. The developers do not need to require them.
 
@@ -52,7 +52,7 @@ A wizard layout is defined in a xml file. This is the basic structure:
     * label: v can be anything. It will be displayed as a ttk::label.
     * combo: v can be one of the options defined in values. Mapping to a html component, a combo is like a select. It will be displayed as ttk::combobox. It must contain:
       * values: Defines the available values in the dropdown. Values can be defined as a static list, separated by commas, or as a dynamic list, using a tcl function that must return a commas separated string (see example NumberOfLoads).
-      * onchange: (optional) TCL function called when the combo value is changed by the user. Usefull to create dependencies manually.
+      * onchange: (optional) TCL function called when the combo va.lue is changed by the user. Usefull to create dependencies manually.
     * image: v must the the imagename (picture.png) NOT THE PATH
 
 #### XML conventions
@@ -73,14 +73,14 @@ To create a wizard on your problemtype, you need to create all the problemtype f
 After loading the gid_smart_wizard package, you need to initialize some data, calling the functions:
 * **smart_wizard::SetWizardNamespace** your_wizard_namespace -> In your wizard controller file, all the functions must be implemented in a namespace.
 * **smart_wizard::SetWizardWindowName** your_wizard_window_name -> just a name where to place the tk window.
-* **smart_wizard::SetWizardImageDirectory** your_image_directory -> the path to find the images for the wizard
-* **smart_wizard::LoadWizardDoc** your_wizard_xml_file -> the path to find the wizard definition xml file
-* **smart_wizard::ImportWizardData** -> method to load your_wizard_xml_file
-* **smart_wizard::CreateWindow** -> starts the wizard in the first step
-See an example in the function Cmas2d::StartWizard of the [example](https://github.com/GiDHome/cmas2d_customlib_wizard)
+* **smart_wizard::SetWizardImageDirectory** your_image_directory -> the path to find the images for the wizard.
+* **smart_wizard::LoadWizardDoc** your_wizard_xml_file -> the path to find the wizard definition xml file.
+* **smart_wizard::ImportWizardData** -> method to load your_wizard_xml_file.
+* **smart_wizard::CreateWindow** -> starts the wizard in the first step.
+See an example in the function Cmas2d::StartWizard of the [example](https://github.com/GiDHome/cmas2d_customlib_wizard).
 
 #### Controller
-In the controller, all the functions must belong to the namespace declared in smart_wizard::SetWizardNamespace. See an example in the file Wizard_Steps.tcl of the [example](https://github.com/GiDHome/cmas2d_customlib_wizard)
+In the controller, all the functions must belong to the namespace declared in smart_wizard::SetWizardNamespace. See an example in the file Wizard_Steps.tcl of the [example](https://github.com/GiDHome/cmas2d_customlib_wizard).
 
 For each step defined in the xml, you must define the function that implements that step:
 * **your_wizard_namespace::your_wizard_step_id** window_tk_path -> You receive the tk path, of the main frame of the wizard window. There you can place in tcl/tk the widgets that you want, or use the automatic system (This is why this package is useful).
@@ -90,5 +90,18 @@ To create the step in the automatic way, just call:
 Extra (optional):
 You can bind a procedure to the Next button of a step. In order to implement it, just create a function called:
 * **your_wizard_namespace::Next{your_wizard_step_id}**
-For example: Cmas2d::Wizard::NextData -> (The step id is Data)
+For example: Cmas2d::Wizard::NextData -> (The step id is Data).
 This is useful to implement some action like storing data in the tree, draw something, change the view for the next step...
+
+#### Extra functions
+There are some functions that you can call anywhere in your code, in the begining, in a step load function, or somewhere else. They are, of course, optional.
+
+##### Window management
+* **smart_wizard::SetWizardTitle** your_title -> Just that, change the wizard window title (not the step title!).
+* **smart_wizard::SetWindowSize** x y -> Changes the wizard window size. Make sure your contents fit inside!
+* **smart_wizard::DestroyWindow** -> It just destroys the wizard window.
+
+##### Data API
+* **smart_wizard::SetProperty** step_id item_id value -> Do you remember the items in the xml? They define the fields of a step in the wizard. We can change the value using this function.
+* **smart_wizard::GetProperty** step_id item_id -> Gets the value of the item.
+* **smart_wizard::GetStepProperties** step_id -> Gets all the items of a step (not the values, just the item_id, so you can use the function above).
