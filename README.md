@@ -66,6 +66,7 @@ A wizard layout is defined in a xml file. This is the basic structure:
 ### TCL implementation
 
 :bulb: Disclaimer: If you are here, I assume that you know how to create a problemtype in GiD, and know the basics of TCL.
+
 To create a wizard on your problemtype, you need to create all the problemtype files (spd, tcl, bat...) and another to implement the wizard controller.
 
 #### Initialize
@@ -79,7 +80,7 @@ After loading the gid_smart_wizard package, you need to initialize some data, ca
 See an example in the function Cmas2d::StartWizard of the [example](https://github.com/GiDHome/cmas2d_customlib_wizard)
 
 #### Controller
-In the controller, all the functions must belong to the namespace declared in smart_wizard::SetWizardNamespace.
+In the controller, all the functions must belong to the namespace declared in smart_wizard::SetWizardNamespace. See an example in the file Wizard_Steps.tcl of the [example](https://github.com/GiDHome/cmas2d_customlib_wizard)
 
 For each step defined in the xml, you must define the function that implements that step:
 * **your_wizard_namespace::your_wizard_step_id** window_tk_path -> You receive the tk path, of the main frame of the wizard window. There you can place in tcl/tk the widgets that you want, or use the automatic system (This is why this package is useful).
