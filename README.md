@@ -66,4 +66,28 @@ A wizard layout is defined in a xml file. This is the basic structure:
 ### TCL implementation
 
 :bulb: Disclaimer: If you are here, I assume that you know how to create a problemtype in GiD, and know the basics of TCL.
+To create a wizard on your problemtype, you need to create all the problemtype files (spd, tcl, bat...) and another to implement the wizard controller.
 
+#### Initialize
+After loading the gid_smart_wizard package, you need to initialize some data, calling the functions:
+* **smart_wizard::SetWizardNamespace** your_wizard_namespace -> In your wizard controller file, all the functions must be implemented in a namespace.
+* **smart_wizard::SetWizardWindowName** your_wizard_window_name -> just a name where to place the tk window.
+* **smart_wizard::SetWizardImageDirectory** your_image_directory -> the path to find the images for the wizard
+* **smart_wizard::LoadWizardDoc** your_wizard_xml_file -> the path to find the wizard definition xml file
+* **smart_wizard::ImportWizardData** -> method to load your_wizard_xml_file
+* **smart_wizard::CreateWindow** -> starts the wizard in the first step
+See an example in the function Cmas2d::StartWizard of the [example](https://github.com/GiDHome/cmas2d_customlib_wizard)
+
+#### Controller
+In the controller, all the functions must belong to the namespace declared in smart_wizard::SetWizardNamespace.
+
+For each step defined in the xml, you must define the function that implements that step:
+* **your_wizard_namespace::your_wizard_step_id** window_tk_path -> You receive the tk path, of the main frame of the wizard window. There you can place in tcl/tk the widgets that you want, or use the automatic system (This is why this package is useful).
+To create the step in the automatic way, just call:
+* **smart_wizard::AutoStep** window_tk_path your_wizard_step_id and let the xml work for you.
+
+Extra (optional):
+You can bind a procedure to the Next button of a step. In order to implement it, just create a function called:
+* **your_wizard_namespace::Next{your_wizard_step_id}**
+For example: Cmas2d::Wizard::NextData -> (The step id is Data)
+This is useful to implement some action like storing data in the tree, draw something, change the view for the next step...
