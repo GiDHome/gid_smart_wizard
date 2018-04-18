@@ -18,6 +18,8 @@ namespace eval smart_wizard {
     variable wizard_title
 }
 
+# 1- CONFIGURATION
+
 proc smart_wizard::Init { } {
 
     variable wizDoc
@@ -78,6 +80,71 @@ proc smart_wizard::SetWizardImageDirectory {path} {
     variable images_dir
     set images_dir $path
 }
+
+# Load a wizard document
+proc smart_wizard::ImportWizardData {} {
+    variable wizDoc
+    variable wprops
+    variable stepidlist
+    variable wizardid
+    variable stepsframes
+    
+    # ABSTRACT: Import all wizard data variables from XML 
+    set xmlData $wizDoc
+    #W [$KPriv(xmlWiz) asXML]
+    set wizardid [[$xmlData selectNodes "/Wizard"] getAttribute "wizardid"]
+    smart_wizard::SetWizardTitle [[$xmlData selectNodes "/Wizard"] getAttribute "title"]
+    set path "/Wizard/Steps"
+    set stepNodes [$xmlData selectNodes "$path/Step"]
+    set dataNodes [$xmlData selectNodes "$path/Step/Data"]
+    set stepNumber 0
+    #W "Sn $stepNodes"
+    foreach stepNode $stepNodes dataNode $dataNodes {
+        set i 0
+        incr stepNumber 
+        set stepId [$stepNode getAttribute id ""]
+        set stepTitle [$stepNode getAttribute title "Step $stepNumber: $stepId"]
+        set stepSubtitle [$stepNode getAttribute subtitle ""]
+        set wprops($stepId,title) $stepTitle
+        set wprops($stepId,subtitle) $stepSubtitle
+        lappend stepidlist $stepId
+        dict set stepsframes $stepId [dict create]        
+        foreach frameNode [$dataNode selectNodes "./Frame"] {
+            set frame_n [$frameNode getAttribute n $i]
+            set position [$frameNode getAttribute position "left"]
+            set row_span [$frameNode getAttribute row_span 1]
+            set title [$frameNode getAttribute title ""]
+            dict set stepsframes $stepId $frame_n [dict create ]
+            dict set stepsframes $stepId $frame_n title $title
+            dict set stepsframes $stepId $frame_n position $position
+            dict set stepsframes $stepId $frame_n row_span $row_span
+            set items_list [list]
+            foreach node [$frameNode childNodes] {
+                # For nodes with no children
+                if {([$node nodeName] eq "Item") && (![$node hasChildNodes])} {
+                    set n [smart_wizard::_ProcessItemNode $stepId $node]
+                    lappend items_list $n
+                    set wprops($stepId,$n,order) $i
+                    incr i                
+                }
+                if {([$node nodeName] eq "Table") && ([$node hasChildNodes])} {
+                    foreach item [$node childNodes] {
+                        if {([$item nodeName] eq "Item") && (![$item hasChildNodes])} {
+                            set n [smart_wizard::_ProcessItemNode $stepId $item]
+                            lappend items_list $n
+                            set wprops($stepId,$n,order) $i
+                            incr i                
+                        }
+                    }
+                }
+            }
+            dict set stepsframes $stepId $frame_n items $items_list
+        }
+    }
+    catch {array unset wprops(dummy)}
+}
+
+# 2- WINDOW MANAGEMENT
 
 # Set the wizard window title
 proc smart_wizard::SetWizardTitle {t} {
@@ -168,68 +235,8 @@ proc smart_wizard::DestroyWindow {} {
     return ""
 }
 
-# Load a wizard document
-proc smart_wizard::ImportWizardData {} {
-    variable wizDoc
-    variable wprops
-    variable stepidlist
-    variable wizardid
-    variable stepsframes
-    
-    # ABSTRACT: Import all wizard data variables from XML 
-    set xmlData $wizDoc
-    #W [$KPriv(xmlWiz) asXML]
-    set wizardid [[$xmlData selectNodes "/Wizard"] getAttribute "wizardid"]
-    smart_wizard::SetWizardTitle [[$xmlData selectNodes "/Wizard"] getAttribute "title"]
-    set path "/Wizard/Steps"
-    set stepNodes [$xmlData selectNodes "$path/Step"]
-    set dataNodes [$xmlData selectNodes "$path/Step/Data"]
-    set stepNumber 0
-    #W "Sn $stepNodes"
-    foreach stepNode $stepNodes dataNode $dataNodes {
-        set i 0
-        incr stepNumber 
-        set stepId [$stepNode getAttribute id ""]
-        set stepTitle [$stepNode getAttribute title "Step $stepNumber: $stepId"]
-        set stepSubtitle [$stepNode getAttribute subtitle ""]
-        set wprops($stepId,title) $stepTitle
-        set wprops($stepId,subtitle) $stepSubtitle
-        lappend stepidlist $stepId
-        dict set stepsframes $stepId [dict create]        
-        foreach frameNode [$dataNode selectNodes "./Frame"] {
-            set frame_n [$frameNode getAttribute n $i]
-            set position [$frameNode getAttribute position "left"]
-            set row_span [$frameNode getAttribute row_span 1]
-            set title [$frameNode getAttribute title ""]
-            dict set stepsframes $stepId $frame_n [dict create ]
-            dict set stepsframes $stepId $frame_n title $title
-            dict set stepsframes $stepId $frame_n position $position
-            dict set stepsframes $stepId $frame_n row_span $row_span
-            set items_list [list]
-            foreach node [$frameNode childNodes] {
-                # For nodes with no children
-                if {([$node nodeName] eq "Item") && (![$node hasChildNodes])} {
-                    set n [smart_wizard::_ProcessItemNode $stepId $node]
-                    lappend items_list $n
-                    set wprops($stepId,$n,order) $i
-                    incr i                
-                }
-                if {([$node nodeName] eq "Table") && ([$node hasChildNodes])} {
-                    foreach item [$node childNodes] {
-                        if {([$item nodeName] eq "Item") && (![$item hasChildNodes])} {
-                            set n [smart_wizard::_ProcessItemNode $stepId $item]
-                            lappend items_list $n
-                            set wprops($stepId,$n,order) $i
-                            incr i                
-                        }
-                    }
-                }
-            }
-            dict set stepsframes $stepId $frame_n items $items_list
-        }
-    }
-    catch {array unset wprops(dummy)}
-}
+
+# 3- DATA API
 
 # Data access API - Set value of a property in a step
 proc smart_wizard::SetProperty { stepid propid value } {
@@ -245,7 +252,7 @@ proc smart_wizard::GetProperty { stepid propid } {
     return $v
 }
 
-# Data access API - Get all the  property of a step
+# Data access API - Get all the property of a step
 proc smart_wizard::GetStepProperties { stepid } {
     variable wprops
     set lista [list ]
@@ -254,6 +261,8 @@ proc smart_wizard::GetStepProperties { stepid } {
     }
     return $lista
 }
+
+# 4- STEP CONFIGURATION
 
 # Automatic wizard - Auto generate the step
 proc smart_wizard::AutoStep {win stepid} {
