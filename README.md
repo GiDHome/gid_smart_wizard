@@ -107,7 +107,7 @@ There are some functions that you can call anywhere in your code, in the beginin
 * **smart_wizard::GetStepProperties** step_id -> Gets all the items of a step (not the values, just the item_id, so you can use the function above).
 
 # Conclusion
-After this amazing documentation, maybe you need to **procastinate** for a couple of minutes watching this classic fairytale: The little red ridning hood and the wolf
+After this amazing documentation, maybe you need to **procrastinate** for a couple of minutes watching this classic fairytale: The little red ridning hood and the wolf
 [![Little red ridning hood](http://i.imgur.com/7YTMFQp.png)](https://vimeo.com/3514904 "Little red riding hood - Click to Watch!")
 
 Maybe checking the example provided by [GiD](https://github.com/GiDHome/cmas2d_customlib_wizard) makes all this take some sense... 
