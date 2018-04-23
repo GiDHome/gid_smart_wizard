@@ -48,7 +48,8 @@ A wizard layout is defined in a xml file. This is the basic structure:
   * v: Value of the item. It's the default value.
   * type: As a html input, we can define item types:
     * integer: v must be an integer, and the wcb package will prevent user to insert any strange character. It will be displayed as a ttk::entry.
-    * double: v must be an double, and the wcb package will prevent user to insert any strange character. It will be displayed as a ttk::entry.
+    * double: v must be an double, and the wcb package will prevent user to insert any strange character. It will be displayed as a ttk::entry. It can contain:
+      * units: String that will be displayed next to the entry, to inform about units.
     * string: v can be anything. It will be displayed as a ttk::entry.
     * label: v can be anything. It will be displayed as a ttk::label.
     * combo: v can be one of the options defined in values. Mapping to a html component, a combo is like a select. It will be displayed as ttk::combobox. It must contain:
