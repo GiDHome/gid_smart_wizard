@@ -31,6 +31,7 @@ A wizard layout is defined in a xml file. This is the basic structure:
   * version: For version controlling.
   * wizardid: Identifier of the wizard. will be used in the internal data structures and in the window naming.
   * title: Will be placed in the top of the wizard window.
+  * icon: In Windows, it will be used as window icon.
 * **Steps**: Just a container of steps. It has no attributes.
 * **Step**: They belong to the Steps container. The system will create a 'window' for each of this steps. They must be placed here in order and must contain:
   * id: Will be used in the internal data structures.
@@ -98,6 +99,7 @@ There are some functions that you can call anywhere in your code, in the beginin
 
 ##### Window management
 * **smart_wizard::SetWizardTitle** your_title -> Just that, change the wizard window title (not the step title!).
+* **smart_wizard::SetWizardIcon** your_icon_name -> An image file must exist inside your image directory. It will be placed as icon of the wizard window.
 * **smart_wizard::SetWindowSize** x y -> Changes the wizard window size. Make sure your contents fit inside!
 * **smart_wizard::DestroyWindow** -> It just destroys the wizard window.
 
