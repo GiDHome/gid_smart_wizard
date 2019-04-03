@@ -46,6 +46,7 @@ A wizard layout is defined in a xml file. This is the basic structure:
   * n: Internal name, will be used in the internal data structures. Must be unique in a step.
   * pn: Public name. Will be converted into a ttk::label and placed in the first position (left align).
   * v: Value of the item. It's the default value.
+  * state: Visibility of the item. Can be "normal" or "hidden" (optional)
   * type: As a html input, we can define item types:
     * integer: v must be an integer, and the wcb package will prevent user to insert any strange character. It will be displayed as a ttk::entry.
     * double: v must be an double, and the wcb package will prevent user to insert any strange character. It will be displayed as a ttk::entry. It can contain:
