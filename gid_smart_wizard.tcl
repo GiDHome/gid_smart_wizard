@@ -260,8 +260,7 @@ proc smart_wizard::DestroyWindow {} {
 
 # Data access API - Set value of a property in a step
 proc smart_wizard::SetProperty { stepid propid value } {
-    variable wprops
-    set wprops($stepid,$propid,value) $value
+    set smart_wizard::wprops($stepid,$propid) $value
 }
 
 # Data access API - Get value of a property in a step
