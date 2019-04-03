@@ -2,7 +2,7 @@ package require gid_wizard
 package require wcb
 package require tdom
 
-package provide gid_smart_wizard 0.1
+package provide gid_smart_wizard 0.3
 
 # Singleton wizard library
 namespace eval smart_wizard {
@@ -16,6 +16,7 @@ namespace eval smart_wizard {
     variable stepsframes
     variable images_dir
     variable wizard_title
+    variable wizard_icon
 }
 
 # 1- CONFIGURATION
@@ -48,7 +49,10 @@ proc smart_wizard::Init { } {
     set images_dir ""
     
     variable wizard_title
-    set  wizard_title "Wizard"
+    set wizard_title "Wizard"
+
+    variable wizard_icon
+    set wizard_icon ""
 }
 
 # Load the file.wiz with the wizard structure
@@ -94,6 +98,7 @@ proc smart_wizard::ImportWizardData {} {
     #W [$KPriv(xmlWiz) asXML]
     set wizardid [[$xmlData selectNodes "/Wizard"] getAttribute "wizardid"]
     smart_wizard::SetWizardTitle [[$xmlData selectNodes "/Wizard"] getAttribute "title"]
+    smart_wizard::SetWizardIcon [[$xmlData selectNodes "/Wizard"] getAttribute "icon"]
     set path "/Wizard/Steps"
     set stepNodes [$xmlData selectNodes "$path/Step"]
     set dataNodes [$xmlData selectNodes "$path/Step/Data"]
@@ -152,6 +157,12 @@ proc smart_wizard::SetWizardTitle {t} {
     set wizard_title $t
 }
 
+# Set the wizard window icon
+proc smart_wizard::SetWizardIcon {icon} {
+    variable wizard_icon
+    set wizard_icon $icon
+}
+
 # Set the size of the wizard window - Note that the window must exist
 proc smart_wizard::SetWindowSize {x y} {
     variable wizwindow
@@ -170,6 +181,8 @@ proc smart_wizard::CreateWindow {} {
     variable wizardid
     variable wiznamespace
     variable wizard_title
+    variable images_dir
+    variable wizard_icon
     variable wprops
     # W "Step list:\n\t$stepidlist"
 
@@ -180,10 +193,17 @@ proc smart_wizard::CreateWindow {} {
     
     # Create the window
     # If gid esto, else lo otro
-    #InitWindow $wizwindow [= "Wizard"] Pre::kwiz::CreateWizardWindowGeom
+    #InitWindow $wizwindow [= "Wizard"] PreSmartWizardWindowGeom
    
     toplevel $wizwindow
+    # Set window title
     wm title $wizwindow $wizard_title
+
+    # Set window icon
+    if {$wizard_icon ne ""} {
+        set im [image create photo -file [file join $images_dir $wizard_icon]]
+        wm iconphoto $wizwindow $im
+    }
 
     # Center window
     wm withdraw $wizwindow
@@ -271,6 +291,8 @@ proc smart_wizard::AutoStep {win stepid} {
     smart_wizard::SetWindowSize 650 500
     set entrywidth 10
     
+    if {[winfo exists $win.left]} {destroy $win.left}
+    if {[winfo exists $win.right]} {destroy $win.right}
     set left_frame [ttk::frame $win.left ]
     set right_frame [ttk::frame $win.right ]
 
@@ -288,6 +310,8 @@ proc smart_wizard::AutoStep {win stepid} {
             set fr [ttk::frame $frame_path.$frame_id -borderwidth 10]
         }
         foreach item [dict get $stepsframes $stepid $frame items] {
+            set state [smart_wizard::GetProperty $stepid $item,state]
+            if {$state eq "hidden"} {continue}
             set type [smart_wizard::GetProperty $stepid $item,type]
             set value [smart_wizard::GetProperty $stepid $item,value]
             set order [smart_wizard::GetProperty $stepid $item,order]
@@ -375,10 +399,12 @@ proc smart_wizard::_ProcessItemNode { step node } {
     set pn [$node getAttribute pn $n]
     set v [$node getAttribute v ""]
     set t [$node getAttribute type ""]
+    set s [$node getAttribute state ""]
     #W "::kwiz::wprops($stepId,$n,value)= $v -> $i"
     set wprops($step,$n,value) [subst -nocommands -novariables $v]
     set wprops($step,$n,type) $t
     set wprops($step,$n,name) $pn
+    set wprops($step,$n,state) $s
     
     if {$t eq "combo"} {
         set values [$node getAttribute values ""]
