@@ -4,4 +4,4 @@ proc LoadLibrary_gid_smart_wizard { dir } {
     }
 }
 
-package ifneeded gid_smart_wizard 0.3 [list LoadLibrary_gid_smart_wizard $dir]
+package ifneeded gid_smart_wizard 0.4 [list LoadLibrary_gid_smart_wizard $dir]
