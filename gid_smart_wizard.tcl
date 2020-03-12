@@ -2,7 +2,7 @@ package require gid_wizard
 package require wcb
 package require tdom
 
-package provide gid_smart_wizard 0.3
+package provide gid_smart_wizard 0.4
 
 # Singleton wizard library
 namespace eval smart_wizard {
@@ -250,8 +250,10 @@ proc smart_wizard::CreateWindow {} {
 # Delete the wizard window
 proc smart_wizard::DestroyWindow {} {
     variable wizwindow
-    
-    if {[winfo exists $wizwindow]} {destroy $wizwindow}
+
+    if {[info exists $wizwindow]} {
+        if {[winfo exists $wizwindow]} {destroy $wizwindow}
+    }
     return ""
 }
 
@@ -341,6 +343,17 @@ proc smart_wizard::AutoStep {win stepid} {
                     } {
                         grid [set $lab] [set $ent] -sticky ew
                     }
+                }
+                string {
+                    set lab$order [ttk::label $fr.l$order -text "${txt}:"]
+                    set ent$order [ttk::entry $fr.e$order -textvariable ::smart_wizard::wprops($stepid,$item,value) -width $entrywidth]
+                    set txt [= "Enter a value for $txt"]
+                    tooltip::tooltip $fr.e$order "${txt}."
+                    set lab "lab$order"
+                    set ent "ent$order"
+                    set uni ""
+                    grid [set $lab] [set $ent] -sticky ew
+                    
                 }
                 combo {
                     set lab$order [ttk::label $fr.l$order -text "${txt}:"]
