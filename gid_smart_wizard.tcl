@@ -1,5 +1,8 @@
-package require gid_wizard
-package require wcb
+
+if { ![GidUtils::IsTkDisabled] } {
+    package require gid_wizard
+    package require wcb
+}
 package require tdom
 
 package provide gid_smart_wizard 0.4
@@ -166,6 +169,10 @@ proc smart_wizard::SetWizardIcon {icon} {
 # Set the size of the wizard window - Note that the window must exist
 proc smart_wizard::SetWindowSize {x y} {
     variable wizwindow
+    if { [GidUtils::IsTkDisabled] } {
+        #e.g. batch mode without windows
+        return 1
+    }
 
     if {[winfo exists $wizwindow]} {
         wm minsize $wizwindow $x $y
@@ -185,6 +192,10 @@ proc smart_wizard::CreateWindow {} {
     variable wizard_icon
     variable wprops
     # W "Step list:\n\t$stepidlist"
+    if { [GidUtils::IsTkDisabled] } {
+        #e.g. batch mode without windows
+        return 1
+    }
 
     # Destroy the window 
     if {[winfo exists $wizwindow]} {
@@ -251,6 +262,11 @@ proc smart_wizard::CreateWindow {} {
 proc smart_wizard::DestroyWindow {} {
     variable wizwindow
 
+    if { [GidUtils::IsTkDisabled] } {
+        #e.g. batch mode without windows
+        return 1
+    }
+
     if {[info exists $wizwindow]} {
         if {[winfo exists $wizwindow]} {destroy $wizwindow}
     }
@@ -289,6 +305,12 @@ proc smart_wizard::GetStepProperties { stepid } {
 proc smart_wizard::AutoStep {win stepid} {
     variable stepsframes
     variable images_dir
+
+    if { [GidUtils::IsTkDisabled] } {
+        #e.g. batch mode without windows
+        return 1
+    }
+
     smart_wizard::SetWindowSize 650 500
     set entrywidth 10
     
