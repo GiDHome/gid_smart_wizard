@@ -217,7 +217,7 @@ proc smart_wizard::CreateWindow {} {
     update
     wm deiconify $wizwindow
 
-    wm attributes $wizwindow -topmost 1
+    #wm attributes $wizwindow -topmost 1
 
     # Window size
     smart_wizard::SetWindowSize 700 500
