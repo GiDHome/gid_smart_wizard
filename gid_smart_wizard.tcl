@@ -267,7 +267,7 @@ proc smart_wizard::DestroyWindow {} {
         return 1
     }
 
-    if {[info exists $wizwindow]} {
+    if {[info exists wizwindow]} {
         if {[winfo exists $wizwindow]} {destroy $wizwindow}
     }
     return ""
